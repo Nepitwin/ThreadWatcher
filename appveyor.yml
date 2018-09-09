@@ -25,3 +25,6 @@ only_commits:
     - test/
     - test/
     - cmake/
+    
+test_script:
+    - sh: C:\projects\threadwatcher\build\test\Debug\ThreadWatcherTesting.exe

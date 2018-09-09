@@ -1,5 +1,7 @@
 # Thread Watcher
 
+[![Build status](https://ci.appveyor.com/api/projects/status/8lek5cqicj7ma49o?svg=true)](https://ci.appveyor.com/project/Nepitwin/threadwatcher)
+
 Thread watcher is a C++ based implementation to monitor running threads by executions states. 
 
 ![Thread Watcher][watcher]
@@ -17,16 +19,12 @@ This project can be build with cmake for all platforms. All dependencies will be
 Build with ccmake
 ```
 ccmake . 
-make 
-make test
 ```
 
 Build with cmake
 ```
 cd build
 cmake ..
-make 
-make test
 ```
 
 ### Example
