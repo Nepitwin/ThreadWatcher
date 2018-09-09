@@ -1,22 +1,22 @@
 branches:
   only:
   - master
-  
+configuration:
+- Release 
 image:
 - Visual Studio 2017
- 
 before_build:
 - cmd: |-
     mkdir build
     cd build
     cmake --version
     cmake .. -DCMAKE_BUILD_TYPE=Release
-
 build:
   project: c:\projects\threadwatcher\build\ThreadWatcher.sln
   verbosity: minimal
   parallel: true
-
+test_script:
+- ps: C:\projects\threadwatcher\build\test\Release\ThreadWatcherTesting.exe
 only_commits:
   files:
     - CMakeLists.txt
@@ -25,6 +25,3 @@ only_commits:
     - test/
     - test/
     - cmake/
-    
-test_script:
-    - sh: C:\projects\threadwatcher\build\test\Debug\ThreadWatcherTesting.exe
