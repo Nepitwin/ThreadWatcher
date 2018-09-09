@@ -1,10 +1,14 @@
 #pragma once
 
 #include "IFunction.h"
-// WIN32
-#include <windows.h>
 #include <thread>
 #include <chrono>
+
+#ifdef __linux__ 
+#include <pthread.h> 
+#elif _WIN32
+#include <windows.h>
+#endif
 
 using namespace std::chrono_literals;
 

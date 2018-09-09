@@ -34,19 +34,22 @@ void Process::stop()
 		// Check if thread is still running
 		if (isRunning())
 		{
-			// ----- WINDOWS ONLY -------
-			// https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-terminatethread
-			// If termination was not successfully try to kill hard thread process
-			DWORD result = ::TerminateThread(native_handle, 1);
-			if (result != 0)
-			{
+			#ifdef __linux__ 
+				pthread_cancel(native_handle);
 				this->processStatus = Process::Status::KILLED;
-			}
-			else
-			{
-				this->processStatus = Process::Status::KILLEXCEPTION;
-			}
-			// ----- WINDOWS ONLY -------
+			#elif _WIN32
+				// https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-terminatethread
+				// If termination was not successfully try to kill hard thread process
+				DWORD result = ::TerminateThread(native_handle, 1);
+				if (result != 0)
+				{
+					this->processStatus = Process::Status::KILLED;
+				}
+				else
+				{
+					this->processStatus = Process::Status::KILLEXCEPTION;
+				}
+			#endif
 		}
 		else
 		{
