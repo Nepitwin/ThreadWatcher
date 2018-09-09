@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <iostream>
 
 using namespace std::chrono_literals;
 
@@ -44,6 +45,12 @@ void monitorWatcher(ThreadWatcher &watcher, std::vector<std::string> processingN
 					std::this_thread::sleep_for(2s);
 					result = watcher.hasProcessStatus(processingName, Process::Status::RUN);
 				}
+
+				if (!result)
+				{
+					std::cout << "Process = " <<  processingName << std::endl;
+				}
+
 				EXPECT_TRUE(result);
 			}
 		}
@@ -64,9 +71,6 @@ void addProcessToWatcher(ThreadWatcher &watcher)
 	std::shared_ptr<Process> processClean(new Process(ptrProcessClean));
 	watcher.addProcess("PASS_A37", processClean);
 	ASSERT_TRUE(watcher.existsProcess("PASS_A37"));
-	std::this_thread::sleep_for(2s);
-	// Watcher is running added process will be executed immediately
-	ASSERT_TRUE(watcher.hasProcessStatus("PASS_A37", Process::Status::RUN));
 }
 
 TEST(TestThreadWatchers, ExistsProcessNotFound) 
