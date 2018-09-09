@@ -1,0 +1,14 @@
+language: cpp
+compiler: gcc
+
+env:
+  - OMP_NUM_THREADS=4
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - make test
+
+script: make -j8
