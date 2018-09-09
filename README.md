@@ -14,8 +14,17 @@ Eache processing thread starts by an Init state if only created but not started 
 
 This project can be build with cmake for all platforms. All dependencies will be downloaded from hunter repository. Currently the source code part to kill processes hard is not platform independent and use the Windows API. 
 
+Build with ccmake
 ```
 ccmake . 
+make 
+make test
+```
+
+Build with cmake
+```
+cd build
+cmake ..
 make 
 make test
 ```
