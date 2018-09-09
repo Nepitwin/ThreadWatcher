@@ -1,8 +1,10 @@
 # Thread Watcher
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8lek5cqicj7ma49o?svg=true)](https://ci.appveyor.com/project/Nepitwin/threadwatcher)
-
 Thread watcher is a C++ based implementation to monitor running threads by executions states. 
+
+| Build         | Status        |
+| ------------- |:-------------:|
+| Appveyor      | [![Build status](https://ci.appveyor.com/api/projects/status/8lek5cqicj7ma49o?svg=true)](https://ci.appveyor.com/project/Nepitwin/threadwatcher) |
 
 ![Thread Watcher][watcher]
 
