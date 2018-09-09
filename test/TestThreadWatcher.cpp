@@ -36,7 +36,16 @@ void monitorWatcher(ThreadWatcher &watcher, std::vector<std::string> processingN
 		for (std::string processingName : processingNames)
 		{
 			if (watcher.existsProcess(processingName))
-				EXPECT_TRUE(watcher.hasProcessStatus(processingName, Process::Status::RUN));
+			{
+				bool result = watcher.hasProcessStatus(processingName, Process::Status::RUN);
+				if (!result)
+				{
+					// Wait 2 seconds because process can be added dynamic by an running watcher
+					std::this_thread::sleep_for(2s);
+					result = watcher.hasProcessStatus(processingName, Process::Status::RUN);
+				}
+				EXPECT_TRUE(result);
+			}
 		}
 			
 		i++;
@@ -55,7 +64,7 @@ void addProcessToWatcher(ThreadWatcher &watcher)
 	std::shared_ptr<Process> processClean(new Process(ptrProcessClean));
 	watcher.addProcess("PASS_A37", processClean);
 	ASSERT_TRUE(watcher.existsProcess("PASS_A37"));
-
+	std::this_thread::sleep_for(2s);
 	// Watcher is running added process will be executed immediately
 	ASSERT_TRUE(watcher.hasProcessStatus("PASS_A37", Process::Status::RUN));
 }
