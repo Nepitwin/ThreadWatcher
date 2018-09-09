@@ -29,6 +29,8 @@ void stopWatcher(ThreadWatcher &watcher)
 void monitorWatcher(ThreadWatcher &watcher, std::vector<std::string> processingNames)
 {
 	int i = 0;
+	// First run can be fail safe that process is not running
+	bool firstRun = true;
 
 	// Check four times. Tests runs overrall six seconds.
 	while (i < 4)
@@ -39,22 +41,15 @@ void monitorWatcher(ThreadWatcher &watcher, std::vector<std::string> processingN
 			if (watcher.existsProcess(processingName))
 			{
 				bool result = watcher.hasProcessStatus(processingName, Process::Status::RUN);
-				if (!result)
-				{
-					// Wait 2 seconds because process can be added dynamic by an running watcher
-					std::this_thread::sleep_for(2s);
-					result = watcher.hasProcessStatus(processingName, Process::Status::RUN);
-				}
-
-				if (!result)
+				if (!result && !firstRun)
 				{
 					std::cout << "Process = " <<  processingName << std::endl;
 				}
-
-				EXPECT_TRUE(result);
+				EXPECT_TRUE(firstRun || result);
 			}
 		}
 			
+		firstRun = false;
 		i++;
 	}
 }
