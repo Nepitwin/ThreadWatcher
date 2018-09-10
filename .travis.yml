@@ -1,17 +1,17 @@
+dist: trusty
 language: cpp 
 compiler: gcc 
-
+install: export CXX="g++-7"
 matrix:
   include:
+    # works on Precise and Trusty
     - os: linux
-      env: COMPILER_NAME=gcc CXX=g++-9 CC=gcc-9
       addons:
-        apt:
-          packages:
-            - g++-9
-          sources: &sources
-            - llvm-toolchain-precise-3.8
+          apt:
+            sources:
             - ubuntu-toolchain-r-test
+            packages:
+            - g++-7
 
 env: 
   - OMP_NUM_THREADS=4 
