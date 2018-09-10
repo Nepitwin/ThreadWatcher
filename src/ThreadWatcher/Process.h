@@ -1,8 +1,6 @@
 #pragma once
 
 #include "IFunction.h"
-// WIN32
-#include <windows.h>
 #include <thread>
 #include <chrono>
 
@@ -30,7 +28,7 @@ public:
 		RUN, 			///< Process is running
 		FINISHED, 		///< Process is stopped clear
 		KILLED, 		///< Process is hard killed
-		KILLEXCEPTION	///< Process can not be killed by an exception
+		RUNS_AFTER_KILL	///< Process can not be killed and runs always.
 	};
 
 	/**
@@ -76,11 +74,6 @@ public:
 	void updateStatus();
 
 private:
-
-	/**
-	 * @brief Native handler from running thread.
-	 */
-	void* native_handle;
 
 	/**
 	 * @brief Actual thread from running process.

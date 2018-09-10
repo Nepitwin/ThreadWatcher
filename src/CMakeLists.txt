@@ -1,5 +1,3 @@
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 set(SOURCE_FILES ThreadWatcher/IFunction.h
                  ThreadWatcher/Process.h ThreadWatcher/Process.cpp
                  ThreadWatcher/ThreadWatcher.h ThreadWatcher/ThreadWatcher.cpp)

@@ -3,11 +3,11 @@
 #include <atomic>
 
 /**
-* @brief Test implementation from a process function which stopes clear.
+* @brief Test implementation from a example process.
 *
 * @author Andreas Sekulski
 */
-class CleanProcessTesting : public ::IFunction
+class ProcessTesting : public ::IFunction
 {
 
 public:
@@ -15,7 +15,7 @@ public:
 	/**
 	* @brief Construct a new Clean Process Testing object
 	*/
-	CleanProcessTesting()
+    ProcessTesting()
 	{
 		stopProcess = false;
 	}
@@ -23,7 +23,7 @@ public:
 	/**
 	* @brief Destroy the Clean Process Testing object
 	*/
-	virtual ~CleanProcessTesting() {};
+	virtual ~ProcessTesting() {};
 
 	/**
 	 * Overridden function.
@@ -44,41 +44,7 @@ public:
 private:
 
 	/**
-	* @brief Atomic boolean to stop process.
-	*/
+	 * @brief Atomic boolean to stop process.
+	 */
 	std::atomic<bool> stopProcess;
-};
-
-/**
-* @brief Test implementation from a process function which only can be killed hard.
-*
-* @author Andreas Sekulski
-*/
-class KillProcessTesting : public ::IFunction
-{
-
-public:
-
-	/**
-	* @brief Construct a new Kill Process Testing object
-	*/
-	KillProcessTesting() {}
-
-	/**
-	* @brief Destroy the Kill Process Testing object
-	*/
-	virtual ~KillProcessTesting() {};
-
-	/**
-	 * Overridden function.
-	 */
-	void process() override
-	{
-		while (true) {}
-	}
-
-	/**
-	 * Overridden function.
-	 */
-	void stop() override {}
 };
