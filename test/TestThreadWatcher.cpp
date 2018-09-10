@@ -69,7 +69,7 @@ void monitorWatcher(ThreadWatcher &watcher, std::vector<testProcess> processings
 void addProcessToWatcher(ThreadWatcher &watcher)
 {
 	std::this_thread::sleep_for(1s);
-	std::shared_ptr<IFunction> ptrProcessClean(new CleanProcessTesting());
+	std::shared_ptr<IFunction> ptrProcessClean(new ProcessTesting());
 	std::shared_ptr<Process> processClean(new Process(ptrProcessClean));
 	watcher.addProcess("PASS_A37", processClean);
 	ASSERT_TRUE(watcher.existsProcess("PASS_A37"));
@@ -85,7 +85,7 @@ TEST(TestThreadWatchers, ExistsProcessNotFound)
 TEST(TestThreadWatchers, ExistsProcess)
 {
 	ThreadWatcher watcher;
-	std::shared_ptr<IFunction> ptrFunction(new CleanProcessTesting());
+	std::shared_ptr<IFunction> ptrFunction(new ProcessTesting());
 	std::shared_ptr<Process> process(new Process(ptrFunction));
 
 	watcher.addProcess("PASS_A38", process);
@@ -96,7 +96,7 @@ TEST(TestThreadWatchers, ExistsProcess)
 TEST(TestThreadWatchers, RemoveProcess)
 {
 	ThreadWatcher watcher;
-	std::shared_ptr<IFunction> ptrFunction(new CleanProcessTesting());
+	std::shared_ptr<IFunction> ptrFunction(new ProcessTesting());
 	std::shared_ptr<Process> process(new Process(ptrFunction));
 
 	ASSERT_FALSE(watcher.existsProcess("PASS_A38"));
@@ -109,8 +109,8 @@ TEST(TestThreadWatchers, RemoveProcess)
 TEST(TestThreadWatchers, ProcessMonitoring)
 {
 	ThreadWatcher watcher;
-	std::shared_ptr<IFunction> ptrProcessClean(new CleanProcessTesting());
-	std::shared_ptr<IFunction> ptrProcessKill(new KillProcessTesting());
+	std::shared_ptr<IFunction> ptrProcessClean(new ProcessTesting());
+	std::shared_ptr<IFunction> ptrProcessKill(new ProcessTesting());
 	std::shared_ptr<Process> processClean(new Process(ptrProcessClean));
 	std::shared_ptr<Process> processKill(new Process(ptrProcessKill));
 
@@ -130,14 +130,14 @@ TEST(TestThreadWatchers, ProcessMonitoring)
 		stopWatcher.join();
 
 	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A38", Process::Status::FINISHED));
-	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A39", Process::Status::KILLED));
+	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A39", Process::Status::FINISHED));
 }
 
 TEST(TestThreadWatchers, ProcessMonitoringAddNewProcessByRun)
 {
 	ThreadWatcher watcher;
-	std::shared_ptr<IFunction> ptrProcessClean(new CleanProcessTesting());
-	std::shared_ptr<IFunction> ptrProcessKill(new KillProcessTesting());
+	std::shared_ptr<IFunction> ptrProcessClean(new ProcessTesting());
+	std::shared_ptr<IFunction> ptrProcessKill(new ProcessTesting());
 	std::shared_ptr<Process> processClean(new Process(ptrProcessClean));
 	std::shared_ptr<Process> processKill(new Process(ptrProcessKill));
 
@@ -162,5 +162,5 @@ TEST(TestThreadWatchers, ProcessMonitoringAddNewProcessByRun)
 
 	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A37", Process::Status::FINISHED));
 	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A38", Process::Status::FINISHED));
-	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A39", Process::Status::KILLED));
+	EXPECT_TRUE(watcher.hasProcessStatus("PASS_A39", Process::Status::FINISHED));
 }

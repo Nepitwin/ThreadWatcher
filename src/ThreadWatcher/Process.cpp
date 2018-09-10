@@ -11,13 +11,12 @@ Process::~Process()
 
 void Process::start()
 {
-	this->processStatus = Process::Status::RUN;
 	// Start std::thread here
 	this->thread = std::thread(&IFunction::process, function);
 	if (thread.joinable())
 	{
+        this->processStatus = Process::Status::RUN;
 		// Join running thread and if closed stop it
-		this->native_handle = this->thread.native_handle();
 		this->thread.join();
 	}
 }
@@ -30,31 +29,15 @@ void Process::stop()
 		this->function->stop();
 		// Time for thread to stop
 		std::this_thread::sleep_for(2s);
-
 		// Check if thread is still running
-		if (isRunning())
-		{
-			#ifdef __linux__ 
-				pthread_cancel(native_handle);
-				this->processStatus = Process::Status::KILLED;
-			#elif _WIN32
-				// https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-terminatethread
-				// If termination was not successfully try to kill hard thread process
-				DWORD result = ::TerminateThread(native_handle, 1);
-				if (result != 0)
-				{
-					this->processStatus = Process::Status::KILLED;
-				}
-				else
-				{
-					this->processStatus = Process::Status::KILLEXCEPTION;
-				}
-			#endif
-		}
-		else
+		if (!isRunning())
 		{
 			this->processStatus = Process::Status::FINISHED;
 		}
+		else
+        {
+            this->processStatus = Process::Status::RUNS_AFTER_KILL;
+        }
 	}
 }
 
@@ -70,7 +53,7 @@ bool Process::isRunning()
 
 void Process::updateStatus()
 {
-	if (!isRunning() && this->processStatus != Process::Status::FINISHED && this->processStatus != Process::Status::KILLEXCEPTION)
+	if (!isRunning() && this->processStatus != Process::Status::FINISHED && this->processStatus != Process::Status::RUNS_AFTER_KILL)
 	{
 		this->processStatus = Process::Status::KILLED;
 	}
