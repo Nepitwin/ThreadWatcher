@@ -1,24 +1,20 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.22.3)
 
-### Hunter snapshot that will be used ###
-### https://github.com/ruslo/hunter/releases ###
-include("cmake/HunterGate.cmake")
-HunterGate(
-        URL "https://github.com/ruslo/hunter/archive/v0.23.4.tar.gz"
-        SHA1 "8b2255921208517a55c9533c500131387e3c3dd0"
-)
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake")
+set(VCPKG_TARGET_TRIPLET "x86-windows-static")
+
+set(VCPKG_INSTALL_CMD ${VCPKG_ROOT}/vcpkg.exe install --triplet ${VCPKG_TARGET_TRIPLET} --feature-flags manifests)
+execute_process(COMMAND ${VCPKG_INSTALL_CMD} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 project(ThreadWatcher)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-### Download dependencies ###
-hunter_add_package(GTest)
-
-### Find dependencies ###
-find_package(GTest CONFIG REQUIRED)	# GTest::main
+find_package(GTest CONFIG REQUIRED)
 
 enable_testing()
 
