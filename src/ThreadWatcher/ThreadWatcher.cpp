@@ -1,115 +1,111 @@
 #include "ThreadWatcher.h"
 
-ThreadWatcher::ThreadWatcher()
+ThreadWatcher::Watcher::Watcher()
 {
 	std::shared_ptr<IFunction> ptrFunction(this);
-	this->watcherThread = new Process(ptrFunction);
+	this->watcherThread = new ThreadProcess(ptrFunction);
 	this->exitWatcher = false;
 }
 
-ThreadWatcher::~ThreadWatcher()
-{
-}
-
-bool ThreadWatcher::hasProcessStatus(std::string processName, Process::Status status)
+bool ThreadWatcher::Watcher::HasProcessStatus(const std::string& processName, ThreadProcess::Status status)
 {	
-	if (existsProcess(processName))
+	if (ExistsProcess(processName))
 	{
-		return getProcess(processName)->hasStatus(status);
+		return GetProcess(processName)->HasStatus(status);
 	}
 
 	return false;
 }
 
-bool ThreadWatcher::existsProcess(std::string processName)
+bool ThreadWatcher::Watcher::ExistsProcess(const std::string& processName)
 {
 	mutex.lock();
-	std::map<std::string, std::shared_ptr<Process>>::iterator it = threads.find(processName);
+	auto it = threads.find(processName);
 	mutex.unlock();
 	return it != threads.end();
 }
 
-void ThreadWatcher::addProcess(std::string processName, std::shared_ptr<Process> process)
+void ThreadWatcher::Watcher::AddProcess(const std::string& processName, const std::shared_ptr<ThreadProcess>& process)
 {
-	stopActiveThread(processName);
+    StopActiveThread(processName);
 	mutex.lock();
-	threads.insert(std::pair<std::string, std::shared_ptr<Process>>(processName, process));
+	threads.insert(std::pair<std::string, std::shared_ptr<ThreadProcess>>(processName, process));
 	mutex.unlock();
 
 	// If watcher thread runs execute this process thread
-	if (this->watcherThread->hasStatus(Process::Status::RUN))
-		startDetachedProcess(process);
+	if (this->watcherThread->HasStatus(ThreadProcess::Status::RUN))
+        StartDetachedProcess(process);
 }
 
-void ThreadWatcher::removeProcess(std::string processName)
+void ThreadWatcher::Watcher::RemoveProcess(const std::string& processName)
 {
-	stopActiveThread(processName);
+    StopActiveThread(processName);
 	mutex.lock();
 	threads.erase(processName);
 	mutex.unlock();
 }
 
-void ThreadWatcher::watch()
+void ThreadWatcher::Watcher::Watch()
 {
-	if (this->watcherThread->hasStatus(Process::Status::INIT))
+	if (this->watcherThread->HasStatus(ThreadProcess::Status::INIT))
 	{
-		// Start watcher thread to watch all sub processes
-		this->watcherThread->start();
+		// Start watcher thread to Watch all sub processes
+        this->watcherThread->Start();
 	}
 }
 
-void ThreadWatcher::process()
+void ThreadWatcher::Watcher::Process()
 {
 	while (!exitWatcher)
 	{
 		mutex.lock();
 		for (auto const& x : threads)
 		{
-			std::shared_ptr<Process> process = x.second;
+			std::shared_ptr<ThreadProcess> process = x.second;
 			// Check if a new thread is add or update status from all.
-			if (process->hasStatus(Process::Status::INIT))
-				startDetachedProcess(process);	
+			if (process->HasStatus(ThreadProcess::Status::INIT))
+                StartDetachedProcess(process);
 			else
-				process->updateStatus();
+                process->UpdateStatus();
 		}
 		mutex.unlock();
 		std::this_thread::sleep_for(5s);
 	}
 }
 
-void ThreadWatcher::stop()
+void ThreadWatcher::Watcher::Stop()
 {
 	mutex.lock();
 	for (auto const& x : threads)
 	{
-		std::shared_ptr<Process> process = x.second;
-		if (process->hasStatus(Process::Status::RUN))
-			process->stop();
+		std::shared_ptr<ThreadProcess> process = x.second;
+		if (process->HasStatus(ThreadProcess::Status::RUN))
+            process->Stop();
 	}
 	exitWatcher = true;
 	mutex.unlock();
 }
 
-std::shared_ptr<Process> ThreadWatcher::getProcess(std::string processName)
+std::shared_ptr<ThreadWatcher::ThreadProcess> ThreadWatcher::Watcher::GetProcess(const std::string& processName)
 {
 	mutex.lock();
-	std::shared_ptr<Process> process = threads.find(processName)->second;
+	std::shared_ptr<ThreadProcess> process = threads.find(processName)->second;
 	mutex.unlock();
 	return process;
 }
 
-void ThreadWatcher::stopActiveThread(std::string processName)
+void ThreadWatcher::Watcher::StopActiveThread(const std::string& processName)
 {
-	if (existsProcess(processName))
+	if (ExistsProcess(processName))
 	{
-		std::shared_ptr<Process> ptrProcess = getProcess(processName);
-		if (ptrProcess->hasStatus(Process::Status::RUN))
-			ptrProcess->stop();
+		std::shared_ptr<ThreadProcess> ptrProcess = GetProcess(processName);
+		if (ptrProcess->HasStatus(ThreadProcess::Status::RUN))
+            ptrProcess->Stop();
 	}
 }
 
-void ThreadWatcher::startDetachedProcess(std::shared_ptr<Process> process)
+void ThreadWatcher::Watcher::StartDetachedProcess(const std::shared_ptr<ThreadProcess>& process)
 {
-	std::thread pThread(&Process::start, process);
+	std::thread pThread(&ThreadProcess::Start, process);
 	pThread.detach();
 }

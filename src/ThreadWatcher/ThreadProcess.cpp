@@ -1,25 +1,25 @@
-#include "ProcessThread.h"
+#include "ThreadProcess.h"
 
 #include <utility>
 
-Threadwatcher::Process::Process(std::shared_ptr<IFunction> function) : function(std::move(function))
+ThreadWatcher::ThreadProcess::ThreadProcess(std::shared_ptr<ThreadWatcher::IFunction> function) : function(std::move(function))
 {
-	this->processStatus = Process::Status::INIT;
+	this->processStatus = ThreadProcess::Status::INIT;
 }
 
-void Threadwatcher::Process::Start()
+void ThreadWatcher::ThreadProcess::Start()
 {
 	// Start std::thread here
-	this->thread = std::thread(&::Threadwatcher::IFunction::Process, function);
+	this->thread = std::thread(&::ThreadWatcher::IFunction::Process, function);
 	if (thread.joinable())
 	{
-        this->processStatus = Process::Status::RUN;
+        this->processStatus = ThreadProcess::Status::RUN;
 		// Join running thread and if closed Stop it
 		this->thread.join();
 	}
 }
 
-void Threadwatcher::Process::Stop()
+void ThreadWatcher::ThreadProcess::Stop()
 {
 	if (IsRunning())
 	{
@@ -30,29 +30,29 @@ void Threadwatcher::Process::Stop()
 		// Check if thread is still running
 		if (!IsRunning())
 		{
-			this->processStatus = Process::Status::FINISHED;
+			this->processStatus = ThreadProcess::Status::FINISHED;
 		}
 		else
         {
-            this->processStatus = Process::Status::RUNS_AFTER_KILL;
+            this->processStatus = ThreadProcess::Status::RUNS_AFTER_KILL;
         }
 	}
 }
 
-bool Threadwatcher::Process::HasStatus(Process::Status status)
+bool ThreadWatcher::ThreadProcess::HasStatus(ThreadProcess::Status status)
 {
 	return this->processStatus == status;
 }
 
-bool Threadwatcher::Process::IsRunning()
+bool ThreadWatcher::ThreadProcess::IsRunning()
 {
 	return thread.get_id() != std::thread::id();
 }
 
-void Threadwatcher::Process::UpdateStatus()
+void ThreadWatcher::ThreadProcess::UpdateStatus()
 {
-	if (!IsRunning() && this->processStatus != Process::Status::FINISHED && this->processStatus != Process::Status::RUNS_AFTER_KILL)
+	if (!IsRunning() && this->processStatus != ThreadProcess::Status::FINISHED && this->processStatus != ThreadProcess::Status::RUNS_AFTER_KILL)
 	{
-		this->processStatus = Process::Status::KILLED;
+		this->processStatus = ThreadProcess::Status::KILLED;
 	}
 }

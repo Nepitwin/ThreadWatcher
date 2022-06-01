@@ -12,7 +12,7 @@ Thread watcher is a C++ based implementation to monitor running threads by execu
 
 ## Process states
 
-Eache processing thread starts by an Init state if only created but not started from thread watcher. If thread watcher is running all process will be automatic executed and has the running state. By stopping an process it trys to stop this thread clean (finished) and if it's not work hard killed (killed). If both methods to kill not work an killed exception status will be set to process.
+Eache processing thread starts by an Init state if only created but not started from thread watcher. If thread watcher is running all process will be automatic executed and has the running state. By stopping an process it trys to Stop this thread clean (finished) and if it's not work hard killed (killed). If both methods to kill not work an killed exception status will be set to process.
 
 ![Process states][states]
 
@@ -64,7 +64,7 @@ public:
     /**
      * Overridden function.
      */
-    void stop() override
+    void Stop() override
     {
         stopProcess = true;
     }
@@ -72,27 +72,27 @@ public:
 private:
 
     /**
-     * @brief Atomic boolean to stop process.
+     * @brief Atomic boolean to Stop process.
      */
     std::atomic<bool> stopProcess;
 };
 ```
 
-Use this processing in an thread watcher to monitor his running states and start watcher to watch all added processes.
+Use this processing in an thread watcher to monitor his running states and Start watcher to Watch all added processes.
 
 ```
 ThreadWatcher watcher;
 std::shared_ptr<IFunction> ptrProcess(new CleanProcess());
 std::shared_ptr<Process> processClean(new Process(ptrProcess));
-watcher.addProcess("PROCESS_A39", processClean);
+watcher.AddProcess("PROCESS_A39", processClean);
 // Added process will be in state init if watcher not started.
-watcher.hasProcessStatus("PROCESS_A39", Process::Status::INIT)
+watcher.HasProcessStatus("PROCESS_A39", Process::Status::INIT)
 
 // Important this call will block the execution by thread.join() method from watcher.
-watcher.watch();
+watcher.Watch();
 
 // If watcher is started process should be in state run.
-watcher.hasProcessStatus("PROCESS_A39", Process::Status::RUN)
+watcher.HasProcessStatus("PROCESS_A39", Process::Status::RUN)
 ```
 
 ## License

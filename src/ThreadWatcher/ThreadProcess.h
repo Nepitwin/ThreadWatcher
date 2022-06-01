@@ -6,14 +6,14 @@
 
 using namespace std::chrono_literals;
 
-namespace Threadwatcher
+namespace ThreadWatcher
 {
     /**
-     * @brief Process class to handle process threads.
+     * @brief Thread process class to handle threads.
      *
      * @author Andreas Sekulski
      */
-    class Process
+    class ThreadProcess
     {
     public:
 
@@ -38,12 +38,12 @@ namespace Threadwatcher
          *
          * @param function
          */
-        explicit Process(std::shared_ptr<IFunction> function);
+        explicit ThreadProcess(std::shared_ptr<IFunction> function);
 
         /**
          * @brief Destroy the Process object
          */
-        ~Process() = default;
+        ~ThreadProcess() = default;
 
         /**
          * @brief Start executions from process.
@@ -61,7 +61,7 @@ namespace Threadwatcher
          * @param status Status to check from process.
          * @return True if process is equal to checked status otherwise false.
          */
-        bool HasStatus(Process::Status status);
+        bool HasStatus(ThreadProcess::Status status);
 
         /**
          * @brief Checks if process is running.
@@ -90,6 +90,6 @@ namespace Threadwatcher
         /**
          * @brief Actual process status from process.
          */
-        Process::Status processStatus;
+        ThreadProcess::Status processStatus;
     };
 }

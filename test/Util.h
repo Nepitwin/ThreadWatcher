@@ -7,7 +7,7 @@
 *
 * @author Andreas Sekulski
 */
-class ProcessTesting : public ::IFunction
+class ProcessTesting : public ThreadWatcher::IFunction
 {
 
 public:
@@ -23,12 +23,12 @@ public:
 	/**
 	* @brief Destroy the Clean Process Testing object
 	*/
-	virtual ~ProcessTesting() {};
+	virtual ~ProcessTesting() = default;
 
 	/**
 	 * Overridden function.
 	 */
-	void process() override
+	void Process() override
 	{
 		while (!stopProcess) {}
 	}
@@ -36,7 +36,7 @@ public:
 	/**
 	 * Overridden function.
 	 */
-	void stop() override
+	void Stop() override
 	{
 		stopProcess = true;
 	}
@@ -44,7 +44,7 @@ public:
 private:
 
 	/**
-	 * @brief Atomic boolean to stop process.
+	 * @brief Atomic boolean to Stop process.
 	 */
 	std::atomic<bool> stopProcess;
 };
