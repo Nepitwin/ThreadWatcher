@@ -1,7 +1,15 @@
 {
-    "name": "threadwatcher",
-    "version-string": "0.0.1",
-    "dependencies": [
-      "gtest"
-    ]
+  "name": "threadwatcher",
+  "version-string": "0.0.1",
+  "builtin-baseline": "ce613c41372b23b1f51333815feb3edd87ef8a8b",
+  "dependencies": [
+    {
+      "name": "gtest"
+    }
+  ],
+  "overrides": [
+    {
+      "name": "gtest", "version": "1.17.0#1"
+    }
+  ]
 }

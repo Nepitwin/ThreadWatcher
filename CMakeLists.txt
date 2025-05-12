@@ -1,20 +1,14 @@
 cmake_minimum_required(VERSION 3.22.3)
 
-set(CMAKE_TOOLCHAIN_FILE "${VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake")
-set(VCPKG_TARGET_TRIPLET "x86-windows-static")
-
-set(VCPKG_INSTALL_CMD ${VCPKG_ROOT}/vcpkg.exe install --triplet ${VCPKG_TARGET_TRIPLET} --feature-flags manifests)
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_HOME}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+set(VCPKG_INSTALL_CMD ${VCPKG_ROOT}/vcpkg.exe install --feature-flags manifests)
 execute_process(COMMAND ${VCPKG_INSTALL_CMD} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-project(ThreadWatcher)
-
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+project(ThreadWatcher VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-find_package(GTest CONFIG REQUIRED)
 
 enable_testing()
 

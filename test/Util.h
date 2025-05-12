@@ -1,4 +1,4 @@
-#include <ThreadWatcher/IFunction.h>
+#include <ThreadWatcher/IWatcher.h>
 #include <chrono>
 #include <atomic>
 
@@ -7,7 +7,7 @@
 *
 * @author Andreas Sekulski
 */
-class ProcessTesting : public ThreadWatcher::IFunction
+class ProcessTesting : public ThreadWatcher::IWatcher
 {
 
 public:
@@ -24,14 +24,6 @@ public:
 	* @brief Destroy the Clean Process Testing object
 	*/
 	virtual ~ProcessTesting() = default;
-
-	/**
-	 * Overridden function.
-	 */
-	void Process() override
-	{
-		while (!stopProcess) {}
-	}
 
 	/**
 	 * Overridden function.

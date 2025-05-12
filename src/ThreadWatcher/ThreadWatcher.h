@@ -1,11 +1,10 @@
 #pragma once
 
-#include "IFunction.h"
-#include "ThreadProcess.h"
+#include "IWatcher.h"
+#include "Process.h"
 #include <map>
 #include <string>
 #include <mutex>
-#include <thread>
 #include <chrono>
 #include <atomic>
 
@@ -18,7 +17,7 @@ namespace ThreadWatcher
  *
  * @author Andreas Sekulski
  */
-    class Watcher : public ThreadWatcher::IFunction
+    class Watcher final : public IWatcher
     {
     public:
 
@@ -30,7 +29,7 @@ namespace ThreadWatcher
         /**
          * @brief Destroy the Thread Watcher object
          */
-        ~Watcher() = default;
+        ~Watcher() override = default;
 
         /**
          * @brief Checks if given process name exists and has a specific status.
@@ -39,7 +38,7 @@ namespace ThreadWatcher
          * @param status Status check from process.
          * @return True if processName exists and status is equal otherwise false.
          */
-        bool HasProcessStatus(const std::string& processName, ThreadProcess::Status status);
+        bool HasProcessStatus(const std::string& processName, Process::Status status);
 
         /**
          * @brief Checks if given process exists by name.
@@ -55,7 +54,7 @@ namespace ThreadWatcher
          * @param processName Process name to add.
          * @param process Process to add.
          */
-        void AddProcess(const std::string& processName, const std::shared_ptr<ThreadProcess>& process);
+        void AddProcess(const std::string& processName, const std::shared_ptr<Process>& process);
 
         /**
          * @brief Remove process by process name. If process is running this process will be stoped and removed.
@@ -65,16 +64,6 @@ namespace ThreadWatcher
         void RemoveProcess(const std::string &processName);
 
         /**
-         * @brief Watch method to execute thread management watching. This method will block all calls by join thread.
-         */
-        void Watch();
-
-        /**
-         * Overridden function.
-         */
-        void Process() override;
-
-        /**
          * Overridden function.
          */
         void Stop() override;
@@ -82,14 +71,14 @@ namespace ThreadWatcher
     private:
 
         /**
-         * @brief Map handling from all subproccess.
+         * @brief Map handling from all observing processes.
          */
-        std::map<std::string, std::shared_ptr<ThreadProcess>> threads;
+        std::map<std::string, std::shared_ptr<Process>> processes;
 
         /**
-         * @brief Watcher thread process to execute thread management.
+         * @brief Thread watcher to handle all processes.
          */
-        ThreadWatcher::ThreadProcess *watcherThread;
+        std::jthread _watcher_thread;
 
         /**
          * @brief Mutex to lock guards for thread safe map handling.
@@ -97,17 +86,12 @@ namespace ThreadWatcher
         std::mutex mutex;
 
         /**
-         * @brief Atomic indicator to Stop watcher thread.
-         */
-        std::atomic<bool> exitWatcher;
-
-        /**
          * @brief Get the Process object from given process name,
          *
          * @param processName Name to obtain process.
          * @return std::shared_ptr<Process> Process object to handle process threading.
          */
-        std::shared_ptr<ThreadProcess> GetProcess(const std::string &processName);
+        std::shared_ptr<Process> GetProcess(const std::string &processName);
 
         /**
          * @brief Stop given process by process name.
@@ -117,10 +101,15 @@ namespace ThreadWatcher
         void StopActiveThread(const std::string &processName);
 
         /**
+         * @brief Processing method to handle all processes.
+         */
+        void Process(const std::stop_token &stopToken);
+
+        /**
          * @brief Start a detached process as thread.
          *
          * @param process Process to Start detached.
          */
-        static void StartDetachedProcess(const std::shared_ptr<ThreadProcess>& process);
+        static void StartDetachedProcess(const std::shared_ptr<Process>& process);
     };
 }
